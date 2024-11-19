@@ -40,16 +40,9 @@ func (t *Good) MarshalJSON() ([]byte, error) {
 
 func TestMarshal(t *testing.T) {
 	good := Good{ID: 0, Name: "", PlayTime: time.Now(), ExecuteTime: time.Now()}
-	bytes, err := json.Marshal(good)
-	fmt.Printf("%s\n", bytes)
-	fmt.Println(err)
 	goodList := make([]Good, 0)
 	goodList = append(goodList, good)
-	bytes, err = json.Marshal(goodList)
-	// [{"id":456,"val_float":111,"val":-111,"val_bool":true,"val_slice":[],"val_map":{},
-	// "val_struct":{"title":"ABC","like":"","play_time":"0000-00-00 00:00:00"},"val_struct2":{},"name":"123",
-	// "play_time":"2024-11-19 23:17:28","execute_time":"2024-11-19","created_at":"0000-00-00","updated_at":""}]
-	//	<nil>
+	bytes, err := json.Marshal(goodList)
 	fmt.Printf("%s\n", bytes)
 	fmt.Println(err)
 }
