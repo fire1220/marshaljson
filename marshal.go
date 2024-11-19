@@ -2,6 +2,7 @@ package marshaljson
 
 import (
 	"encoding/json"
+	"errors"
 	"reflect"
 )
 
@@ -30,6 +31,9 @@ func verifyField(fieldType reflect.StructField, fieldVal reflect.Value, tabName 
 
 func MarshalFormat(p any) ([]byte, error) {
 	ref := reflect.ValueOf(p)
+	if ref.Kind() == reflect.Pointer {
+		return nil, errors.New("parameter must be a structure")
+	}
 	typ := ref.Type()
 	newField := make([]reflect.StructField, 0, ref.NumField())
 	isNeedNewStruct := false
