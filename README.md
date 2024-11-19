@@ -1,6 +1,31 @@
 # marshaljson
 
+
+### Getting marshaljson
+With Go's module support, go `[build|run|test]` automatically fetches the necessary dependencies when you add the import in your code:
+```shell
+import "github.com/fire1220/marshaljson"
+```
+
+Alternatively, use go get:
+
+```shell
+go get github.com/fire1220/marshaljson
+```
+
+### Running marshaljson
+
 ```go
+package test
+
+import (
+	"encoding/json"
+	"fmt"
+	"github.com/fire1220/marshaljson"
+	"testing"
+	"time"
+)
+
 type GoodInfo struct {
 	Title    string    `json:"title" default:"ABC"`
 	Like     string    `json:"like"`
@@ -8,7 +33,7 @@ type GoodInfo struct {
 }
 
 func (t GoodInfo) MarshalJSON() ([]byte, error) {
-	return MarshalFormat(t)
+	return marshaljson.MarshalFormat(t)
 }
 
 type Good struct {
@@ -27,16 +52,22 @@ type Good struct {
 	UpdatedAt   time.Time   `json:"updated_at" default:""`
 }
 
-func (t Good) MarshalJSON() ([]byte, error) {
-	return MarshalFormat(t)
+func (t *Good) MarshalJSON() ([]byte, error) {
+	return marshaljson.MarshalFormat(*t)
 }
 
 func TestMarshal(t *testing.T) {
 	good := Good{ID: 0, Name: "", PlayTime: time.Now(), ExecuteTime: time.Now()}
 	bytes, err := json.Marshal(good)
-	// {"id":456,"val_float":111,"val":-111,"val_bool":true,"val_slice":[],"val_map":{},
+	fmt.Printf("%s\n", bytes)
+	fmt.Println(err)
+	goodList := make([]Good, 0)
+	goodList = append(goodList, good)
+	bytes, err = json.Marshal(goodList)
+	// [{"id":456,"val_float":111,"val":-111,"val_bool":true,"val_slice":[],"val_map":{},
 	// "val_struct":{"title":"ABC","like":"","play_time":"0000-00-00 00:00:00"},"val_struct2":{},"name":"123",
-	// "play_time":"2024-11-19 18:10:02","execute_time":"2024-11-19","created_at":"0000-00-00","updated_at":""}
+	// "play_time":"2024-11-19 23:17:28","execute_time":"2024-11-19","created_at":"0000-00-00","updated_at":""}]
+	//	<nil>
 	fmt.Printf("%s\n", bytes)
 	fmt.Println(err)
 }
