@@ -3,7 +3,6 @@ package marshaljson
 import (
 	"encoding/json"
 	"reflect"
-	"time"
 )
 
 func verifyField(fieldType reflect.StructField, fieldVal reflect.Value, tabName string) (tabT, bool) {
@@ -78,40 +77,5 @@ func MarshalFormat(p any) ([]byte, error) {
 		}
 		newStruct.Field(i).Set(newFieldVal)
 	}
-	return json.Marshal(newStruct.Interface())
-}
-
-func MarshalFormat1(p any) ([]byte, error) {
-	ref := reflect.ValueOf(p)
-	typ := ref.Type()
-
-	newField := make([]reflect.StructField, 0, ref.NumField())
-	dateTimeReflectType := reflect.TypeOf(dateTime{})
-	for i := 0; i < ref.NumField(); i++ {
-		field := typ.Field(i)
-		fieldType := field.Type
-		if field.Type.String() == "time.Time" {
-			fieldType = dateTimeReflectType
-		}
-		newField = append(newField, reflect.StructField{
-			Name: field.Name,
-			Type: fieldType,
-			Tag:  field.Tag,
-		})
-	}
-
-	newStruct := reflect.New(reflect.StructOf(newField)).Elem()
-	for i := 0; i < newStruct.NumField(); i++ {
-		oldField := ref.Field(i)
-		oldFieldType := typ.Field(i)
-		if oldField.Type().String() != "time.Time" {
-			newStruct.Field(i).Set(oldField)
-			continue
-		}
-		if v, ok := oldField.Interface().(time.Time); ok {
-			newStruct.Field(i).Set(reflect.ValueOf(dateTime{t: v, tag: oldFieldType.Tag}))
-		}
-	}
-
 	return json.Marshal(newStruct.Interface())
 }
